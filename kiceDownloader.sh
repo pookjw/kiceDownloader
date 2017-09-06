@@ -2,7 +2,7 @@
 ## kiceDownloader
 ## kice.re.kr에서 평가원 모의평가 및 수능 답지를 다운로드하는 스크립트입니다. 만약 답지가 서버에 업로드되지 않았다면 업로드될 때가지 무한히 체크해서 업로드가 감지되면 자동으로 다운로드합니다.
 ## 최근 고사 답지만 다운로드 가능합니다.
-VERSION=4
+VERSION=5
 
 function showHelpMessage(){
 	echo "kiceDownloader (Version: ${VERSION}): 평가원 모의평가 및 수능 답지가 업로드될 때가지 무한히 다운로드하는 스크립트 (고3만 지원하며, 지난 고사는 지원하지 않습니다.)"
@@ -18,7 +18,7 @@ function showHelpMessage(){
 	echo "퍙가원 서버 코드를 입력하실 수 있는데 선택적인 사항이며 기본값은 1입니다."
 	echo
 	echo "--nodelay"
-	echo "딜레이 없이 받습니다. (선택)"
+	echo "딜레이 없이 받습니다. 선택적인 사항입니다. 기본값은 1초입니다."
 	echo
 	echo "예시: 2018학년도 9월 모의평가 수학 답지 다운로드"
 	echo "$ ./kiceDownloader.sh --type 201809sumoi --subject 2"
