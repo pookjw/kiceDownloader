@@ -2,10 +2,11 @@
 ## kiceDownloader
 ## kice.re.kr에서 평가원 모의평가 및 수능 답지를 다운로드하는 스크립트입니다. 만약 답지가 서버에 업로드되지 않았다면 업로드될 때가지 무한히 체크해서 업로드가 감지되면 자동으로 다운로드합니다.
 ## 최근 고사 답지만 다운로드 가능합니다.
-VERSION=1
+VERSION=2
 
 function showHelpMessage(){
 	echo "kiceDownloader (Version: ${VERSION}): 평가원 모의평가 및 수능 답지가 업로드될 때가지 무한히 다운로드하는 스크립트 (고3만 지원하며, 지난 고사는 지원하지 않습니다.)"
+	echo "이 스크립트를 사용하면서 사용하는 법적 문제에 책임지지 않습니다."
 	echo
 	echo "--type [시험유형]"
 	echo "시험유형을 필수적으로 입력하셔야 합니다. 예로 들면 2018학년도 9월 모의평가 (2017 시행)은 201809sumoi이며, 2017학년도 수능 (2016 시행)은 uneungtnsmd_2017입니다. 형식은 바뀔 수 있으니 평가원 사이트를 참고해 주세요."
@@ -15,6 +16,9 @@ function showHelpMessage(){
 	echo
 	echo "--server [서버코드]"
 	echo "퍙가원 서버 코드를 입력하실 수 있는데 선택적인 사항이며 기본값은 1입니다."
+	echo
+	echo "--nodelay"
+	echo "딜레이 없이 받습니다. (선택)"
 	echo
 	echo "예시: 2018학년도 9월 모의평가 수학 답지 다운로드"
 	echo "$ ./kiceDownloader.sh --type 201809sumoi --subject 2"
@@ -96,6 +100,10 @@ function setOption(){
 		KiceServer="${9}"
 	fi
 
+	if [[ "${1}" == "--nodelay" || "${2}" == "--nodelay" || "${3}" == "--nodelay" || "${4}" == "--nodelay" || "${5}" == "--nodelay" || "${6}" == "--nodelay" || "${7}" == "--nodelay" || "${8}" == "--nodelay" || "${9}" == "--nodelay" ]]; then
+		NO_DELAY=YES
+	fi
+
 	if [[ -z "${TestType}" || -z "${TestSubject}" ]]; then
 		showHelpMessage
 		exit 0
@@ -118,37 +126,48 @@ function showSummary(){
 
 function downloadFile(){
 	COUNT=0
+	FILE_COUNT=1
+	while(true); do
+		if [[ -f "/tmp/kicefile${FILE_COUNT}.pdf" ]]; then
+			FILE_COUNT=$((${FILE_COUNT}+1))
+		else
+			FILE_PATH="/tmp/kicefile${FILE_COUNT}.pdf"
+			break
+		fi
+	done
 	while(true); do
 		COUNT=$((${COUNT}+1))
 		echo "다운로드 중... (${COUNT})"
-		if [[ -f /tmp/kicefile.pdf || -d /tmp/kicefile.pdf ]]; then
-			rm -rf /tmp/kicefile.pdf
+		if [[ -f "${FILE_PATH}" || -d "${FILE_PATH}" ]]; then
+			rm -rf "${FILE_PATH}"
 		fi
-		curl -# -o /tmp/kicefile.pdf "http://webfs${KiceServer}.kice.re.kr/${TestType}/2018_${TestSubject}.pdf"
+		curl -# -o "${FILE_PATH}" "http://webfs${KiceServer}.kice.re.kr/${TestType}/2018_${TestSubject}.pdf"
 		if [[ "${COUNT}" == 1 ]]; then
 			echo "파일 확인 중..."
-			for VALUE in $(cat /tmp/kicefile.pdf); do
+			for VALUE in $(cat "${FILE_PATH}"); do
 				if [[ "${VALUE}" == "XHTML" ]]; then
 					IS_FAKE_FILE=YES
 					break
 				fi
 			done
 			if [[ "${IS_FAKE_FILE}" == YES ]]; then
-				FILE_SHA1="$(shasum /tmp/kicefile.pdf | awk '{ print $1 }')"
+				FILE_SHA1="$(shasum "${FILE_PATH}" | awk '{ print $1 }')"
 			else
 				echo "완료! 답지 파일 여는 중..."
-				open /tmp/kicefile.pdf
+				open "${FILE_PATH}"
 				exit 0
 			fi
 		else
 			echo "파일 확인 중..."
-			if [[ ! "$(shasum /tmp/kicefile.pdf | awk '{ print $1 }')" == "${FILE_SHA1}" ]]; then
+			if [[ ! "$(shasum "${FILE_PATH}" | awk '{ print $1 }')" == "${FILE_SHA1}" ]]; then
 				echo "완료! 답지 파일 여는 중..."
-				open /tmp/kicefile.pdf
+				open "${FILE_PATH}"
 				exit 0
 			fi
 		fi
-		sleep 1
+		if [[ ! "${NO_DELAY}" == YES ]]; then
+			sleep 1
+		fi
 	done
 }
 
