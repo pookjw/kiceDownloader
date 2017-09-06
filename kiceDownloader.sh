@@ -2,11 +2,11 @@
 ## kiceDownloader
 ## kice.re.kr에서 평가원 모의평가 및 수능 답지를 다운로드하는 스크립트입니다. 만약 답지가 서버에 업로드되지 않았다면 업로드될 때가지 무한히 체크해서 업로드가 감지되면 자동으로 다운로드합니다.
 ## 최근 고사 답지만 다운로드 가능합니다.
-VERSION=7
+VERSION=8
 
 function showHelpMessage(){
 	echo "kiceDownloader (Version: ${VERSION}): 평가원 사이트에 답지가 뜰 때까지 무한히 확인해주는 스크립트. 답지가 뜨면 자동으로 보여줍니다. (고3만 지원하며, 지난 고사는 지원하지 않습니다.)"
-	echo "이 스크립트를 사용하면서 사용하는 법적 문제에 책임지지 않습니다."
+	echo "이 스크립트를 사용하면서 발생하는 법적 문제에 책임지지 않습니다."
 	echo
 	echo "--type [시험유형]"
 	echo "시험유형을 필수적으로 입력하셔야 합니다. 예로 들면 2018학년도 9월 모의평가 (2017 시행)은 201809sumoi이며, 2017학년도 수능 (2016 시행)은 uneungtnsmd_2017입니다. 형식은 바뀔 수 있으니 평가원 사이트를 참고해 주세요."
@@ -122,6 +122,8 @@ function showSummary(){
 	echo "시험코드: ${TestType} ($(($(date +"%Y")+1))학년도)"
 	echo "과목코드: ${TestSubject}"
 	echo "링크: ${DOWNLOAD_URL}"
+	showLines "-"
+	echo "*** 이 스크립트를 사용하면서 발생하는 법적 문제에 책임지지 않습니다."
 	showLines "*"
 }
 
