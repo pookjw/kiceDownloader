@@ -2,7 +2,7 @@
 ## kiceDownloader
 ## kice.re.kr에서 평가원 모의평가 및 수능 답지를 다운로드하는 스크립트입니다. 만약 답지가 서버에 업로드되지 않았다면 업로드될 때가지 무한히 체크해서 업로드가 감지되면 자동으로 다운로드합니다.
 ## 최근 고사 답지만 다운로드 가능합니다.
-VERSION=2
+VERSION=3
 
 function showHelpMessage(){
 	echo "kiceDownloader (Version: ${VERSION}): 평가원 모의평가 및 수능 답지가 업로드될 때가지 무한히 다운로드하는 스크립트 (고3만 지원하며, 지난 고사는 지원하지 않습니다.)"
@@ -112,6 +112,7 @@ function setOption(){
 	if [[ -z "${KiceServer}" ]]; then
 		KiceServer=1
 	fi
+	DOWNLOAD_URL="http://webfs${KiceServer}.kice.re.kr/${TestType}/2018_${TestSubject}.pdf"
 }
 
 function showSummary(){
@@ -120,7 +121,7 @@ function showSummary(){
 	showLines "-"
 	echo "시험코드: ${TestType} ($(($(date +"%Y")+1))학년도)"
 	echo "과목코드: ${TestSubject}"
-	echo "서버: http://webfs${KiceServer}.kice.re.kr/"
+	echo "링크: ${DOWNLOAD_URL}"
 	showLines "*"
 }
 
@@ -141,7 +142,7 @@ function downloadFile(){
 		if [[ -f "${FILE_PATH}" || -d "${FILE_PATH}" ]]; then
 			rm -rf "${FILE_PATH}"
 		fi
-		curl -# -o "${FILE_PATH}" "http://webfs${KiceServer}.kice.re.kr/${TestType}/2018_${TestSubject}.pdf"
+		curl -# -o "${FILE_PATH}" "${DOWNLOAD_URL}"
 		if [[ "${COUNT}" == 1 ]]; then
 			echo "파일 확인 중..."
 			for VALUE in $(cat "${FILE_PATH}"); do
