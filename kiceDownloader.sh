@@ -2,7 +2,7 @@
 ## kiceDownloader
 ## kice.re.kr에서 평가원 모의평가 및 수능 답지를 다운로드하는 스크립트입니다. 만약 답지가 서버에 업로드되지 않았다면 업로드될 때가지 무한히 체크해서 업로드가 감지되면 자동으로 다운로드합니다.
 ## 최근 고사 답지만 다운로드 가능합니다.
-VERSION=3
+VERSION=4
 
 function showHelpMessage(){
 	echo "kiceDownloader (Version: ${VERSION}): 평가원 모의평가 및 수능 답지가 업로드될 때가지 무한히 다운로드하는 스크립트 (고3만 지원하며, 지난 고사는 지원하지 않습니다.)"
@@ -112,7 +112,7 @@ function setOption(){
 	if [[ -z "${KiceServer}" ]]; then
 		KiceServer=1
 	fi
-	DOWNLOAD_URL="http://webfs${KiceServer}.kice.re.kr/${TestType}/2018_${TestSubject}.pdf"
+	DOWNLOAD_URL="http://webfs${KiceServer}.kice.re.kr/${TestType}/$(($(date +"%Y")+1))_${TestSubject}.pdf"
 }
 
 function showSummary(){
